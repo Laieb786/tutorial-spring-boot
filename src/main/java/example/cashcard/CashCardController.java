@@ -37,6 +37,10 @@ public class CashCardController {
         }
     }
 
+    // Die @PostMapping-Annotation definiert einen Endpunkt für POST-Anfragen.
+    // Diese Methode erstellt eine neue CashCard im Repository und gibt eine Antwort
+    // mit dem HTTP-Status 201-CREATED und einem Location-Header zurück, der auf die
+    // neu erstellte Ressource verweist.
     @PostMapping
     private ResponseEntity<Void> createCashCard(@RequestBody CashCard newCashCardRequest, UriComponentsBuilder ucb) {
         CashCard savedCashCard = cashCardRepository.save(newCashCardRequest);

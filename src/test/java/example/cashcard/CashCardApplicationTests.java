@@ -47,7 +47,11 @@ class CashCardApplicationTests {
 		assertThat(response.getBody()).isBlank();
 	}
 
-	// Dies ist ein Test für den POST-Endpunkt, der eine neue CashCard erstellt
+	// Dies ist ein Test für den POST-Endpunkt, der eine neue CashCard mit einem
+	// Betrag von 250.0 erstellen soll. Der Test überprüft, ob der HTTP-Status
+	// 201-CREATED zurückgegeben wird und ob die Location-Header-Informationen
+	// korrekt sind. Anschließend wird die neu erstellte CashCard abgerufen und
+	// überprüft, ob die ID nicht null ist und der Betrag korrekt ist.
 	@Test
 	void shouldCreateANewCashCard() {
 		CashCard newCashCard = new CashCard(null, 250.0); // ID ist null, da sie automatisch generiert werden soll
