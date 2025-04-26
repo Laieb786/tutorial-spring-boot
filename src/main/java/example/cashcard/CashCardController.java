@@ -15,7 +15,6 @@ import org.springframework.web.util.UriComponentsBuilder;
 //Die @RequestMapping-Annotation legt fest, dass alle Anfragen an diesen Controller mit "/cashcards" beginnen
 @RestController
 @RequestMapping("/cashcards")
-
 public class CashCardController {
     // Die CashCardRepository-Instanz wird hier als Abhängigkeit injiziert
     private final CashCardRepository cashCardRepository;
@@ -49,5 +48,6 @@ public class CashCardController {
                 .buildAndExpand(savedCashCard.id())
                 .toUri();
         return ResponseEntity.created(locationOfNewCashCard).build();
+
     }
 }
