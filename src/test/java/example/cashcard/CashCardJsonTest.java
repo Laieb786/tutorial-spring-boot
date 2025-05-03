@@ -35,6 +35,11 @@ class CashCardJsonTest {
 
         @Test
         void cashCardListSerializationTest() throws IOException {
+                // JSON-String ausgeben, bevor die Assertion ausgeführt wird
+                String jsonOutput = jsonList.write(cashCards).getJson();
+                System.out.println("Serialisierte CashCards als JSON:");
+                System.out.println(jsonOutput);
+
                 assertThat(jsonList.write(cashCards)).isStrictlyEqualToJson("list.json");
         }
 
@@ -47,6 +52,23 @@ class CashCardJsonTest {
                                         { "id": 101, "amount": 150.00 }
                                 ]
                                 """;
+
+                // Ergebnis der Deserialisierung speichern und ausgeben
+                CashCard[] deserializedCards = jsonList.parse(expected).getObject();
+                System.out.println("Deserialisierte CashCards:");
+                for (int i = 0; i < deserializedCards.length; i++) {
+                        System.out.println("CashCard " + i + ": id=" + deserializedCards[i].id() +
+                                        ", amount=" + deserializedCards[i].amount());
+                }
+
+                // Original cashCards zum Vergleich ausgeben
+                System.out.println("\nOriginale CashCards:");
+                for (int i = 0; i < cashCards.length; i++) {
+                        System.out.println("CashCard " + i + ": id=" + cashCards[i].id() +
+                                        ", amount=" + cashCards[i].amount());
+                }
+
+                // Die ursprüngliche Assertion beibehalten
                 assertThat(jsonList.parse(expected)).isEqualTo(cashCards);
         }
 
