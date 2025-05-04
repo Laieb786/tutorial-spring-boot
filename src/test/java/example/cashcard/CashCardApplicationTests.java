@@ -3,6 +3,8 @@ package example.cashcard;
 import com.jayway.jsonpath.DocumentContext;
 import com.jayway.jsonpath.JsonPath;
 import net.minidev.json.JSONArray;
+
+import org.apache.catalina.connector.Response;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -18,7 +20,7 @@ import static org.springframework.test.annotation.DirtiesContext.*;
 
 //Die Klasse CashCardApplicationTests ist mit @SpringBootTest annotiert, um den gesamten Anwendungskontext zu laden und die Anwendung in einem zufälligen Port zu starten.
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@DirtiesContext(classMode = ClassMode.AFTER_EACH_TEST_METHOD)
+// @DirtiesContext(classMode = ClassMode.AFTER_EACH_TEST_METHOD)
 class CashCardApplicationTests {
     // Die Annotation @Autowired wird verwendet, um die TestRestTemplate-Instanz zu
     // injizieren, die für die Durchführung von HTTP-Anfragen an die Anwendung
@@ -57,7 +59,7 @@ class CashCardApplicationTests {
     // korrekt sind. Anschließend wird die neu erstellte CashCard abgerufen und
     // überprüft, ob die ID nicht null ist und der Betrag korrekt ist.
     @Test
-    // @DirtiesContext
+    @DirtiesContext
     void shouldCreateANewCashCard() {
         CashCard newCashCard = new CashCard(null, 250.00);
         ResponseEntity<Void> createResponse = restTemplate.postForEntity("/cashcards", newCashCard, Void.class);
@@ -93,5 +95,64 @@ class CashCardApplicationTests {
 
         JSONArray amounts = documentContext.read("$..amount");
         assertThat(amounts).containsExactlyInAnyOrder(123.45, 1.00, 150.00);
+    }
+
+    // Dies ist ein Test für den GET-Endpunkt, der eine Seite von CashCards
+    // zurückgeben soll. Der Test überprüft, ob der HTTP-Status 200-OK zurückgegeben
+    // wird und ob die Anzahl der CashCards in der Seite 3 beträgt.
+    // Anschließend wird überprüft, ob die IDs und Beträge der CashCards den
+    // erwarteten Werten entsprechen.
+    // Der Test verwendet die JsonPath-Bibliothek, um die JSON-Antwort zu
+    // analysieren und die IDs und Beträge der CashCards zu extrahieren.
+    @Test
+    void shouldReturnAPageOfCashCards() {
+        ResponseEntity<String> response = restTemplate.getForEntity("/cashcards?page=0&size=1", String.class);
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+
+        DocumentContext documentContext = JsonPath.parse(response.getBody());
+        JSONArray page = documentContext.read("$[*]");
+        assertThat(page.size()).isEqualTo(1);
+    }
+
+    // Dies ist ein Test für den GET-Endpunkt, der eine Seite von CashCards
+    // zurückgeben soll, die nach dem Betrag in absteigender Reihenfolge sortiert
+    // sind. Der Test überprüft, ob der HTTP-Status 200-OK zurückgegeben wird und
+    // ob die Anzahl der CashCards in der Seite 1 beträgt. Anschließend wird
+    // überprüft, ob der Betrag der ersten CashCard in der Seite 150.00 beträgt.
+    // Der Test verwendet die JsonPath-Bibliothek, um die JSON-Antwort zu
+    // analysieren und den Betrag der ersten CashCard zu extrahieren.
+    @Test
+    void shouldReturnASortedPageOfCashCards() {
+        ResponseEntity<String> response = restTemplate.getForEntity("/cashcards?page=0&size=1&sort=amount,desc",
+                String.class);
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+
+        DocumentContext documentContext = JsonPath.parse(response.getBody());
+        JSONArray page = documentContext.read("$[*]");
+        assertThat(page.size()).isEqualTo(1);
+
+        double amount = documentContext.read("$[0].amount");
+        assertThat(amount).isEqualTo(150.00);
+    }
+
+    // Dies ist ein Test für den GET-Endpunkt, der eine Seite von CashCards
+    // zurückgeben soll, die nach dem Betrag in aufsteigender Reihenfolge sortiert
+    // sind. Der Test überprüft, ob der HTTP-Status 200-OK zurückgegeben wird und
+    // ob die Anzahl der CashCards in der Seite 1 beträgt. Anschließend wird
+    // überprüft, ob der Betrag der ersten CashCard in der Seite 1.00 beträgt.
+    // Der Test verwendet die JsonPath-Bibliothek, um die JSON-Antwort zu
+    // analysieren und den Betrag der ersten CashCard zu extrahieren.
+    @Test
+    void shouldReturnASortedPageOfCashCardsWithNoParametersAndUseDefaultValues() {
+        ResponseEntity<String> response = restTemplate.getForEntity("/cashcards", String.class);
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+
+        DocumentContext documentContext = JsonPath.parse(response.getBody());
+        JSONArray page = documentContext.read("$[*]");
+        assertThat(page.size()).isEqualTo(3);
+
+        JSONArray amounts = documentContext.read("$..amount");
+        assertThat(amounts).containsExactly(1.00, 123.45, 150.00);
+
     }
 }
