@@ -1,6 +1,5 @@
 package example.cashcard;
 
-//Importieren der nötigen Packages
 import org.assertj.core.util.Arrays;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -25,6 +24,10 @@ class CashCardJsonTest {
 
         private CashCard[] cashCards;
 
+        // Die Methode setUp() wird vor jedem Testfall ausgeführt und initialisiert die
+        // cashCards-Variable mit einem Array von CashCard-Objekten
+        // Diese Methode wird mit der @BeforeEach-Annotation versehen, um
+        // sicherzustellen, dass sie vor jedem Testfall ausgeführt wird
         @BeforeEach
         void setUp() {
                 cashCards = Arrays.array(
@@ -33,9 +36,13 @@ class CashCardJsonTest {
                                 new CashCard(101L, 150.00));
         }
 
+        // Die Methode cashCardListSerializationTest() testet die Serialisierung des
+        // cashCards-Arrays in JSON-Format
+        // Die Methode verwendet die JacksonTester-Instanz, um das cashCards-Array in
+        // JSON zu serialisieren und vergleicht das Ergebnis mit einer erwarteten
+        // JSON-Datei (list.json)
         @Test
         void cashCardListSerializationTest() throws IOException {
-                // JSON-String ausgeben, bevor die Assertion ausgeführt wird
                 String jsonOutput = jsonList.write(cashCards).getJson();
                 System.out.println("Serialisierte CashCards als JSON:");
                 System.out.println(jsonOutput);
@@ -43,6 +50,11 @@ class CashCardJsonTest {
                 assertThat(jsonList.write(cashCards)).isStrictlyEqualToJson("list.json");
         }
 
+        // Die Methode cashCardListDeserializationTest() testet die Deserialisierung
+        // eines JSON-Strings in ein CashCard-Array
+        // Die Methode verwendet die JacksonTester-Instanz, um den JSON-String in ein
+        // CashCard-Array zu deserialisieren und vergleicht das Ergebnis mit dem
+        // ursprünglichen cashCards-Array
         @Test
         void cashCardListDeserializationTest() throws IOException {
                 String expected = """
@@ -53,7 +65,6 @@ class CashCardJsonTest {
                                 ]
                                 """;
 
-                // Ergebnis der Deserialisierung speichern und ausgeben
                 CashCard[] deserializedCards = jsonList.parse(expected).getObject();
                 System.out.println("Deserialisierte CashCards:");
                 for (int i = 0; i < deserializedCards.length; i++) {
@@ -61,17 +72,20 @@ class CashCardJsonTest {
                                         ", amount=" + deserializedCards[i].amount());
                 }
 
-                // Original cashCards zum Vergleich ausgeben
                 System.out.println("\nOriginale CashCards:");
                 for (int i = 0; i < cashCards.length; i++) {
                         System.out.println("CashCard " + i + ": id=" + cashCards[i].id() +
                                         ", amount=" + cashCards[i].amount());
                 }
 
-                // Die ursprüngliche Assertion beibehalten
                 assertThat(jsonList.parse(expected)).isEqualTo(cashCards);
         }
 
+        // Die Methode cashCardSerializationTest() testet die Serialisierung eines
+        // einzelnen CashCard-Objekts in JSON-Format
+        // Die Methode verwendet die JacksonTester-Instanz, um das CashCard-Objekt in
+        // JSON zu serialisieren und vergleicht das Ergebnis mit einer erwarteten
+        // JSON-Datei (single.json)
         @Test
         void cashCardSerializationTest() throws IOException {
                 CashCard cashCard = cashCards[0];
@@ -84,6 +98,13 @@ class CashCardJsonTest {
                                 .isEqualTo(123.45);
         }
 
+        // Die Methode cashCardDeserializationTest() testet die Deserialisierung eines
+        // JSON-Strings in ein CashCard-Objekt
+        // Die Methode verwendet die JacksonTester-Instanz, um den JSON-String in ein
+        // CashCard-Objekt zu deserialisieren und vergleicht das Ergebnis mit einem
+        // erwarteten CashCard-Objekt
+        // Die Methode gibt auch die ID und den Betrag des deserialisierten
+        // CashCard-Objekts aus
         @Test
         void cashCardDeserializationTest() throws IOException {
                 String expected = """
