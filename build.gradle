@@ -19,6 +19,7 @@ repositories {
 
 dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-web'
+	implementation 'org.springframework.boot:spring-boot-starter-security'
 	implementation 'org.springframework.data:spring-data-jdbc' //Spring Data JDBC für die Datenbankanbindung
 	implementation 'com.h2database:h2' //H2-Datenbank für die kombinierte Nutzung mit Spring Data JDBC,  schnelle Tests mit H2-Datenbank
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'

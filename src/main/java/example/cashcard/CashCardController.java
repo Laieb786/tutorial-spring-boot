@@ -9,7 +9,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.net.URI;
-import java.util.*;
+import java.util.List;
+import java.util.Optional;
 
 //Die @RestController-Annotation kennzeichnet diese Klasse als Controller für REST-Anfragen
 //Die @RequestMapping-Annotation legt fest, dass alle Anfragen an diesen Controller mit "/cashcards" beginnen
